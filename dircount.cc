@@ -15,7 +15,7 @@ void listdir (const char *name, int level) {
   do {
     if (entry->d_type == DT_DIR) {
       // DT_LNK
-      char path[1024];
+      char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
       path[len] = 0;
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
