@@ -7,10 +7,8 @@ void listdir (const char *name, int level) {
   DIR *dir;
   struct dirent *entry;
 
-  if (!(dir = opendir(name)))
-    return;
-  if (!(entry = readdir(dir)))
-    return;
+  if (!(dir = opendir(name))) return;
+  if (!(entry = readdir(dir))) return;
 
   do {
     if (entry->d_type == DT_DIR) {
