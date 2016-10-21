@@ -1,7 +1,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <string.h>
 #include <stdio.h>
+using namespace std;
 
 void listdir (const char *name, int level) {
   DIR *dir;
@@ -16,8 +18,7 @@ void listdir (const char *name, int level) {
       char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
       path[len] = 0;
-      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-        continue;
+      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
       printf("%*s[%s]\n", level*2, "", entry->d_name);
       listdir(path, level + 1);
     }
@@ -30,7 +31,7 @@ void listdir (const char *name, int level) {
   closedir(dir);
 }
 
-int main (void) {
-  listdir(".", 0);
+int main (int argc, char** argv) {
+  listdir(argv[1], 0);
   return 0;
 }
