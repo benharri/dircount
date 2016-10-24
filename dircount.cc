@@ -32,31 +32,31 @@ void listdir (const char *name) {
 
   do {
     if (entry->d_type == DT_LNK) {
+      if (ht.get(&entry->d_ino)) continue;
+      ht.put(&entry->d_ino, true);
       link_cnt++;
-      printf("there was a link");
-      // RIP in pieces
       char path[4096];
       int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
       path[len] = 0;
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-
       printf("[l] %s/%s\n", name, entry->d_name);
       listdir(path);
     }
     else if (entry->d_type == DT_DIR) {
+      if (ht.get(&entry->d_ino)) continue;
+      ht.put(&entry->d_ino, true);
       dir_cnt++;
       char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
       path[len] = 0;
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-      // printf("%*s[%s]\n", level*2, "", entry->d_name);
       printf("[d] %s/%s\n", name, entry->d_name);
       listdir(path);
     }
     else{
-      file_cnt++;
       if (ht.get(&entry->d_ino)) continue;
       ht.put(&entry->d_ino, true);
+      file_cnt++;
       printf("[f] %d %s/%s\n", (int)entry->d_ino, name, entry->d_name);
 
       char path[4096];
