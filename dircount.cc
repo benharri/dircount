@@ -19,14 +19,15 @@ void listdir (const char *name, int level) {
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
       path[len] = 0;
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-      printf("%*s[%s]\n", level*2, "", entry->d_name);
+      // printf("%*s[%s]\n", level*2, "", entry->d_name);
       listdir(path, level + 1);
     }
     else if (entry->d_type == DT_LNK) {
       // rip in pieces
     }
     else
-      printf("%*s- %s\n", level*2, "", entry->d_name);
+      // printf("%*s- %s\n", level*2, "", entry->d_name);
+      printf("[%s] %s", )
   } while (entry = readdir(dir));
   closedir(dir);
 }
