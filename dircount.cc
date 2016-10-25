@@ -7,17 +7,18 @@
 #include <unordered_map>
 using namespace std;
 
-class Hashtable {
-  unordered_map<ino_t, bool> htmap;
-public:
-  void put(ino_t key, bool value) { htmap[key] = value; }
-  bool get(ino_t key) { return htmap[key]; }
-};
+// class Hashtable {
+//   unordered_map<ino_t, bool> htmap;
+// public:
+//   void put(ino_t key, bool value) { htmap[key] = value; }
+//   bool get(ino_t key) { return htmap[key]; }
+// };
 
 int file_cnt = 0, link_cnt = 0, dir_cnt = 0;
 unsigned long space_used = 0;
 struct stat buf;
-Hashtable ht;
+// Hashtable ht;
+unordered_map<ino_t, bool> ht;
 
 void listdir (const char *name) {
   DIR *dir;
@@ -39,8 +40,7 @@ void listdir (const char *name) {
       listdir(path);
     }
     else {
-      if (ht.get(entry->d_ino)) continue;
-
+      if (ht[entry->d_ino]) continue;
       if (entry->d_type == DT_LNK) {
         link_cnt++;
         printf("[l] %s/%s\n", name, entry->d_name);
@@ -49,7 +49,7 @@ void listdir (const char *name) {
         int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
         path[len] = 0;
         stat(path, &buf);
-        space_used += buf.st_blocks * 512;
+        space_used += buf.st_blocks;
       }
       else{
         file_cnt++;
@@ -59,10 +59,10 @@ void listdir (const char *name) {
         int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
         path[len] = 0;
         stat(path, &buf);
-        space_used += buf.st_blocks * 512;
+        space_used += buf.st_blocks;
       }
 
-      ht.put(entry->d_ino, true);
+      ht[entry->d_ino] = true;
 
     }
   } while ((entry = readdir(dir)));
@@ -71,6 +71,6 @@ void listdir (const char *name) {
 
 int main (int argc, char** argv) {
   listdir(argv[1]);
-  printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu\n", file_cnt, dir_cnt, link_cnt, space_used);
+  printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
   return 0;
 }
