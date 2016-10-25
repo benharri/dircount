@@ -7,17 +7,9 @@
 #include <unordered_map>
 using namespace std;
 
-// class Hashtable {
-//   unordered_map<ino_t, bool> htmap;
-// public:
-//   void put(ino_t key, bool value) { htmap[key] = value; }
-//   bool get(ino_t key) { return htmap[key]; }
-// };
-
 int file_cnt = 0, link_cnt = 0, dir_cnt = 0;
 unsigned long space_used = 0;
 struct stat buf;
-// Hashtable ht;
 unordered_map<ino_t, bool> ht;
 
 void listdir (const char *name) {
@@ -30,8 +22,6 @@ void listdir (const char *name) {
   do {
     if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
     if (entry->d_type == DT_DIR) {
-      // if (ht.get(&entry->d_ino)) continue;
-      // ht.put(&entry->d_ino, true);
       dir_cnt++;
       char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
@@ -45,11 +35,11 @@ void listdir (const char *name) {
         link_cnt++;
         printf("[l] %s/%s\n", name, entry->d_name);
 
-        char path[4096];
-        int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
-        path[len] = 0;
-        stat(path, &buf);
-        space_used += buf.st_blocks;
+        // char path[4096];
+        // int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
+        // path[len] = 0;
+        // stat(path, &buf);
+        // space_used += buf.st_blocks;
       }
       else{
         file_cnt++;
@@ -70,7 +60,8 @@ void listdir (const char *name) {
 }
 
 int main (int argc, char** argv) {
-  listdir(argv[1]);
+  const char* dirpath = argc > 1 ? argv[1] : ".";
+  listdir(dirpath);
   printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
   return 0;
 }

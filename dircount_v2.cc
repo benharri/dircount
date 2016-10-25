@@ -5,13 +5,6 @@
 #include <iostream>
 using namespace std;
 
-// class Hashtable {
-//   unordered_map<ino_t, bool> ht;
-// public:
-//   void put(ino_t key, bool value) { ht[key] = value; }
-//   bool get(ino_t key) { return ht[key]; }
-// };
-
 int dircnt = 0, filecnt = 0, lnkcnt = 0;
 unsigned long space_used;
 struct stat buf;
@@ -37,10 +30,14 @@ bool listFileAndType(const string &dir) {
       }
       else {
         if (ht[dp->d_ino]) continue;
+        string statpath;
         switch(dp->d_type) {
           case DT_REG:
             filecnt++;
             cout << "[f] ";
+            statpath = dir + "/" + file;
+            stat(statpath.c_str(), &buf);
+            space_used += buf.st_blocks;
             break;
           case DT_LNK:
             lnkcnt++;
@@ -50,10 +47,7 @@ bool listFileAndType(const string &dir) {
             cout << "[none] ";
             break;
         }
-        string statpath = dir + "/" + file;
         ht[dp->d_ino] = true;
-        stat(statpath.c_str(), &buf);
-        space_used += buf.st_blocks * 512;
 
         cout << statpath << endl;
       }
@@ -70,13 +64,14 @@ bool listFileAndType(const string &dir) {
 
 
 int main( int argc, char **argv ) {
-  const string dir = (argc > 1 ? argv[1] : "foo");
+  const string dir = (argc > 1 ? argv[1] : ".");
 
   if (!listFileAndType(dir)) {
     cout << "Error:  Cannot open directory '" << dir << "'" << endl;
   }
   cout << endl << "totals" << endl;
   cout << "file count: " << filecnt << "\tdir cnt: " << dircnt << "\tlink cnt: " << lnkcnt << endl;
-  cout << "space used: " << space_used << endl;
+  cout << "space used: " << space_used << " blocks" << endl;
+  cout << "\t" << space_used*512 << " bytes" << endl;
   return 0;
 }
