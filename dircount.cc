@@ -10,12 +10,8 @@ using namespace std;
 class Hashtable {
   unordered_map<const ino_t*, bool> htmap;
 public:
-  void put(const ino_t* key, bool value) {
-    htmap[key] = value;
-  }
-  const bool get(const ino_t* key) {
-    return htmap[key];
-  }
+  void put(const ino_t* key, bool value) { htmap[key] = value; }
+  const bool get(const ino_t* key) { return htmap[key]; }
 };
 
 int file_cnt = 0, link_cnt = 0, dir_cnt = 0;
@@ -40,10 +36,10 @@ void listdir (const char *name) {
       path[len] = 0;
       if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
       printf("[l] %s/%s\n", name, entry->d_name);
-      listdir(path);
+      //listdir(path);
     }
     else if (entry->d_type == DT_DIR) {
-      //if (ht.get(&entry->d_ino)) continue;
+      if (ht.get(&entry->d_ino)) continue;
       //ht.put(&entry->d_ino, true);
       dir_cnt++;
       char path[4096];
