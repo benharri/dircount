@@ -2,6 +2,7 @@
 #include <string>
 #include <sys/stat.h>
 #include <unordered_map>
+#include <unistd.h>
 #include <iostream>
 using namespace std;
 
@@ -31,17 +32,25 @@ bool listFileAndType(const string &dir) {
       else {
         if (ht[dp->d_ino]) continue;
         string statpath;
+
+        statpath = dir + "/" + file;
+        stat(statpath.c_str(), &buf);
+
         switch(dp->d_type) {
           case DT_REG:
             filecnt++;
-            cout << "[f] ";
-            statpath = dir + "/" + file;
-            stat(statpath.c_str(), &buf);
             space_used += buf.st_blocks;
+            cout << "[f] ";
             break;
           case DT_LNK:
             lnkcnt++;
+            // linkname = malloc(buf.st_size + 1);
+            char* linkname;
+            ssize_t r;
+            r = readlink(statpath.c_str(), linkname, buf.st_size + 1);
+            linkname[buf.st_size] = '\0';
             cout << "[l] ";
+            cout << statpath << " points to " << linkname;
             break;
           default:
             cout << "[none] ";
