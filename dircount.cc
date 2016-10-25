@@ -8,10 +8,10 @@
 using namespace std;
 
 class Hashtable {
-  unordered_map<const ino_t*, bool> htmap;
+  unordered_map<ino_t, bool> htmap;
 public:
-  void put(const ino_t* key, bool value) { htmap[key] = value; }
-  const bool get(const ino_t* key) { return htmap[key]; }
+  void put(ino_t key, bool value) { htmap[key] = value; }
+  bool get(ino_t key) { return htmap[key]; }
 };
 
 int file_cnt = 0, link_cnt = 0, dir_cnt = 0;
@@ -27,41 +27,45 @@ void listdir (const char *name) {
   if (!(entry = readdir(dir))) return;
 
   do {
-    if (entry->d_type == DT_LNK) {
-      if (ht.get(&entry->d_ino)) continue;
-      ht.put(&entry->d_ino, true);
-      link_cnt++;
-      char path[4096];
-      int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
-      path[len] = 0;
-      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-      printf("[l] %s/%s\n", name, entry->d_name);
-      //listdir(path);
-    }
-    else if (entry->d_type == DT_DIR) {
-      if (ht.get(&entry->d_ino)) continue;
-      //ht.put(&entry->d_ino, true);
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+    if (entry->d_type == DT_DIR) {
+      // if (ht.get(&entry->d_ino)) continue;
+      // ht.put(&entry->d_ino, true);
       dir_cnt++;
       char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
       path[len] = 0;
-      if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
       printf("[d] %s/%s\n", name, entry->d_name);
       listdir(path);
     }
-    else{
-      if (ht.get(&entry->d_ino)) continue;
-      ht.put(&entry->d_ino, true);
-      file_cnt++;
-      printf("[f] %d %s/%s\n", (int)entry->d_ino, name, entry->d_name);
+    else {
+      if (ht.get(entry->d_ino)) continue;
 
-      char path[4096];
-      int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
-      path[len] = 0;
-      stat(path, &buf);
-      space_used += buf.st_blocks * 512;
+      if (entry->d_type == DT_LNK) {
+        link_cnt++;
+        printf("[l] %s/%s\n", name, entry->d_name);
+
+        char path[4096];
+        int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
+        path[len] = 0;
+        stat(path, &buf);
+        space_used += buf.st_blocks * 512;
+      }
+      else{
+        file_cnt++;
+        printf("[f] %d %s/%s\n", (int)entry->d_ino, name, entry->d_name);
+
+        char path[4096];
+        int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
+        path[len] = 0;
+        stat(path, &buf);
+        space_used += buf.st_blocks * 512;
+      }
+
+      ht.put(entry->d_ino, true);
+
     }
-  } while (entry = readdir(dir));
+  } while ((entry = readdir(dir)));
   closedir(dir);
 }
 
