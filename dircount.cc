@@ -43,8 +43,8 @@ void listdir (const char *name) {
       listdir(path);
     }
     else if (entry->d_type == DT_DIR) {
-      if (ht.get(&entry->d_ino)) continue;
-      ht.put(&entry->d_ino, true);
+      //if (ht.get(&entry->d_ino)) continue;
+      //ht.put(&entry->d_ino, true);
       dir_cnt++;
       char path[4096];
       int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
