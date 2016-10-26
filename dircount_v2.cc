@@ -46,16 +46,16 @@ bool listFileAndType(const string &dir) {
           case DT_LNK:
             lnkcnt++;
             // char* linkname;
-            char linkname[buf.st_size + 1];
+            // char linkname[buf.st_size + 1];
             // linkname = malloc(buf.st_size + 1);
-            ssize_t r;
-            r = readlink(statpath.c_str(), linkname, buf.st_size + 1);
-            linkname[buf.st_size] = '\0';
+            // ssize_t r;
+            // r = readlink(statpath.c_str(), linkname, buf.st_size + 1);
+            // linkname[buf.st_size] = '\0';
             cout << "[l] ";
-            cout << statpath << " points to " << linkname;
+            // cout << statpath << " points to " << linkname;
             break;
           default:
-            cout << "[none] ";
+            cout << "[no type] ";
             break;
         }
         ht[dp->d_ino] = true;
