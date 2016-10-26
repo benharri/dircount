@@ -34,12 +34,6 @@ void listdir (const char *name) {
       if (entry->d_type == DT_LNK) {
         link_cnt++;
         printf("[l] %s/%s\n", name, entry->d_name);
-
-        // char path[4096];
-        // int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
-        // path[len] = 0;
-        // stat(path, &buf);
-        // space_used += buf.st_blocks;
       }
       else{
         file_cnt++;
@@ -50,8 +44,6 @@ void listdir (const char *name) {
         space_used += buf.st_blocks;
         printf("[f] %lu\t%s/%s\n", buf.st_blocks, name, entry->d_name);
       }
-
-
     }
     ht[entry->d_ino] = true;
   } while ((entry = readdir(dir)));
