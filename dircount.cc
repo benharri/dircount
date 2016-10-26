@@ -21,6 +21,7 @@ void listdir (const char *name) {
 
   do {
     if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+    if (ht[entry->d_ino]) continue;
     if (entry->d_type == DT_DIR) {
       dir_cnt++;
       char path[4096];
@@ -30,7 +31,6 @@ void listdir (const char *name) {
       listdir(path);
     }
     else {
-      if (ht[entry->d_ino]) continue;
       if (entry->d_type == DT_LNK) {
         link_cnt++;
         printf("[l] %s/%s\n", name, entry->d_name);
@@ -52,9 +52,9 @@ void listdir (const char *name) {
         space_used += buf.st_blocks;
       }
 
-      ht[entry->d_ino] = true;
 
     }
+    ht[entry->d_ino] = true;
   } while ((entry = readdir(dir)));
   closedir(dir);
 }
