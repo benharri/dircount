@@ -10,6 +10,7 @@ using namespace std;
 int file_cnt = 0, link_cnt = 0, dir_cnt = 0;
 unsigned long space_used = 0;
 struct stat buf;
+off_t space_used_bytes;
 unordered_map<ino_t, bool> ht;
 
 void listdir (const char *name) {
@@ -42,7 +43,8 @@ void listdir (const char *name) {
         path[len] = 0;
         stat(path, &buf);
         space_used += buf.st_blocks;
-        printf("[f] %lu\t%s/%s\n", buf.st_blocks, name, entry->d_name);
+        space_used_bytes += buf.st_size;
+        printf("[f] %lu %lu\t%s/%s\n", buf.st_blocks, buf.st_size, name, entry->d_name);
       }
     }
     ht[entry->d_ino] = true;
@@ -54,6 +56,6 @@ int main (int argc, char** argv) {
   char buf[PATH_MAX + 1];
   char *dirpath = (argc > 1) ? realpath(argv[1], buf) : realpath(".", buf);
   listdir(dirpath);
-  printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
+  printf("\ntotals\nfile count: %d\tdir count: %d\tsymbolic link count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
   return 0;
 }
