@@ -43,13 +43,12 @@ void listdir (const char *name) {
       }
       else{
         file_cnt++;
-        printf("[f] %s/%s\n", name, entry->d_name);
-
         char path[4096];
         int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
         path[len] = 0;
         stat(path, &buf);
         space_used += buf.st_blocks;
+        printf("[f] %lu\t%s/%s\n", buf.st_blocks, name, entry->d_name);
       }
 
 
