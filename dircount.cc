@@ -56,6 +56,6 @@ int main (int argc, char** argv) {
   char buf[PATH_MAX + 1];
   char *dirpath = (argc > 1) ? realpath(argv[1], buf) : realpath(".", buf);
   listdir(dirpath);
-  printf("\ntotals\nfile count: %d\tdir count: %d\tsymbolic link count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
+  printf("\ntotals\nfile count: %d\tdir count: %d\tsymbolic link count: %d\nspace used: %lu blocks\n\t%lu bytes(blocks*512)\n\t%lu bytes\n\n", file_cnt, dir_cnt, link_cnt, space_used, space_used * 512, space_used_bytes);
   return 0;
 }
