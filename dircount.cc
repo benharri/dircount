@@ -60,10 +60,8 @@ void listdir (const char *name) {
 }
 
 int main (int argc, char** argv) {
-  char dirpath[4096];
-  if (argc > 1) realpath(argv[1], dirpath);
-  else realpath(".", dirpath);
-
+  char buf[PATH_MAX + 1];
+  char *dirpath = (argc > 1) ? realpath(argv[1], buf) : realpath(".", buf);
   listdir(dirpath);
   printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
   return 0;
