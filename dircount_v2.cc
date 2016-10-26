@@ -32,6 +32,7 @@ bool listFileAndType(const string &dir) {
       else {
         if (ht[dp->d_ino]) continue;
         string statpath;
+        // char *linkname;
 
         statpath = dir + "/" + file;
         stat(statpath.c_str(), &buf);
@@ -44,8 +45,9 @@ bool listFileAndType(const string &dir) {
             break;
           case DT_LNK:
             lnkcnt++;
+            // char* linkname;
+            char linkname[buf.st_size + 1];
             // linkname = malloc(buf.st_size + 1);
-            char* linkname;
             ssize_t r;
             r = readlink(statpath.c_str(), linkname, buf.st_size + 1);
             linkname[buf.st_size] = '\0';

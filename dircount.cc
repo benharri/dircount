@@ -43,7 +43,7 @@ void listdir (const char *name) {
       }
       else{
         file_cnt++;
-        printf("[f] %d %s/%s\n", (int)entry->d_ino, name, entry->d_name);
+        printf("[f] %s/%s\n", name, entry->d_name);
 
         char path[4096];
         int len = snprintf(path, sizeof(path) - 1, "%s/%s", name, entry->d_name);
@@ -60,7 +60,10 @@ void listdir (const char *name) {
 }
 
 int main (int argc, char** argv) {
-  const char* dirpath = argc > 1 ? argv[1] : ".";
+  char dirpath[4096];
+  if (argc > 1) realpath(argv[1], dirpath);
+  else realpath(".", dirpath);
+
   listdir(dirpath);
   printf("\ntotals\nfile count: %d\tdir count: %d\tlink count: %d\nspace used: %lu blocks\n\t%lu bytes\n", file_cnt, dir_cnt, link_cnt, space_used, space_used*512);
   return 0;
